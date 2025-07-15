@@ -197,25 +197,8 @@ class MetaType(ABCMeta):
             if not all(isinstance(p, str) for p in props):
                 raise TypeError("elements of __props__ have to be strings")
 
-            def _props(self):
-                """
-                Tuple of properties of all attributes
-                """
-                return tuple(getattr(self, a) for a in props)
-
-            dct["_props"] = _props
-
-            def _props_dict(self):
-                """This return a dict of all ``__props__`` key-> value.
-
-                This is useful in optimization to swap op that should have the
-                same props. This help detect error that the new op have at
-                least all the original props.
-
-                """
-                return {a: getattr(self, a) for a in props}
-
-            dct["_props_dict"] = _props_dict
+            # Note: _props and _props_dict methods are now defined in base classes
+            # instead of being generated dynamically here
 
             if "__hash__" not in dct:
 
