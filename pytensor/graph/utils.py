@@ -197,9 +197,6 @@ class MetaType(ABCMeta):
             if not all(isinstance(p, str) for p in props):
                 raise TypeError("elements of __props__ have to be strings")
 
-            # Note: _props and _props_dict methods are now defined in base classes
-            # instead of being generated dynamically here
-
             if "__hash__" not in dct:
 
                 def __hash__(self):
