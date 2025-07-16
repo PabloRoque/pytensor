@@ -204,6 +204,27 @@ class Op(MetaObject):
     as nodes with these Ops must be rebuilt even if the input types haven't changed.
     """
 
+    __props__: tuple[str, ...] = ()
+    """
+    A tuple of attribute names that define the properties of this Op instance.
+
+    These properties are used for equality comparison, hashing, and string representation.
+    Subclasses should override this with the names of attributes that affect the
+    computation performed by the Op.
+
+    Examples
+    ========
+
+    .. code-block:: python
+
+        class MyOp(Op):
+            __props__ = ("param1", "param2")
+
+            def __init__(self, param1, param2):
+                self.param1 = param1
+                self.param2 = param2
+    """
+
     def make_node(self, *inputs: Variable) -> Apply:
         """Construct an `Apply` node that represent the application of this operation to the given inputs.
 
@@ -318,6 +339,40 @@ class Op(MetaObject):
 
     def __ne__(self, other: Any) -> bool:
         return not (self == other)
+
+    def _props(self) -> tuple:
+        """Return a tuple of properties that define this Op instance.
+
+        This method returns a tuple containing the values of all properties
+        listed in the __props__ attribute, if it exists. These properties
+        are used for equality comparison and hashing.
+
+        Returns
+        -------
+        tuple
+            A tuple of property values in the order they appear in __props__.
+            Returns an empty tuple if __props__ is not defined.
+        """
+        if hasattr(self, "__props__"):
+            return tuple(getattr(self, prop) for prop in self.__props__)
+        return ()
+
+    def _props_dict(self) -> dict:
+        """Return a dictionary mapping property names to their values.
+
+        This method returns a dictionary where keys are property names from
+        the __props__ attribute and values are the corresponding property values.
+        This is useful in optimization to swap ops that should have the same props.
+
+        Returns
+        -------
+        dict
+            A dictionary mapping property names to values.
+            Returns an empty dict if __props__ is not defined.
+        """
+        if hasattr(self, "__props__"):
+            return {prop: getattr(self, prop) for prop in self.__props__}
+        return {}
 
     # Convenience so that subclass implementers don't have to import utils
     # just to self.add_tag_trace

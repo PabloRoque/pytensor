@@ -47,6 +47,14 @@ class CustomOpNoProps(CustomOpNoPropsNoEq):
     def __hash__(self):
         return hash((type(self), self.a))
 
+    # Override to remove __props__ and make this Op non-etuplizable (atomic)
+    def __getattribute__(self, name):
+        if name == "__props__":
+            raise AttributeError(
+                f"'{type(self).__name__}' object has no attribute '__props__'"
+            )
+        return super().__getattribute__(name)
+
 
 def test_cons():
     x_pt = pt.vector("x")
