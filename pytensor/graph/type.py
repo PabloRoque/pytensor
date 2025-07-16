@@ -33,27 +33,6 @@ class Type(MetaObject, Generic[D]):
     The `Type` that will be created by a call to `Type.make_constant`.
     """
 
-    __props__: tuple[str, ...] = ()
-    """
-    A tuple of attribute names that define the properties of this Type instance.
-
-    These properties are used for equality comparison, hashing, and string representation.
-    Subclasses should override this with the names of attributes that affect the
-    type specification.
-
-    Examples
-    ========
-
-    .. code-block:: python
-
-        class MyType(Type):
-            __props__ = ("dtype", "shape")
-
-            def __init__(self, dtype, shape):
-                self.dtype = dtype
-                self.shape = shape
-    """
-
     def in_same_class(self, otype: "Type") -> bool | None:
         """Determine if another `Type` represents a subset from the same "class" of types represented by `self`.
 
@@ -276,40 +255,6 @@ class Type(MetaObject, Generic[D]):
 
         """
         return cls.values_eq(a, b)
-
-    def _props(self) -> tuple:
-        """Return a tuple of properties that define this Type instance.
-
-        This method returns a tuple containing the values of all properties
-        listed in the __props__ attribute, if it exists. These properties
-        are used for equality comparison and hashing.
-
-        Returns
-        -------
-        tuple
-            A tuple of property values in the order they appear in __props__.
-            Returns an empty tuple if __props__ is not defined.
-        """
-        if hasattr(self, "__props__"):
-            return tuple(getattr(self, prop) for prop in self.__props__)
-        return ()
-
-    def _props_dict(self) -> dict:
-        """Return a dictionary mapping property names to their values.
-
-        This method returns a dictionary where keys are property names from
-        the __props__ attribute and values are the corresponding property values.
-        This is useful in optimization to swap types that should have the same props.
-
-        Returns
-        -------
-        dict
-            A dictionary mapping property names to values.
-            Returns an empty dict if __props__ is not defined.
-        """
-        if hasattr(self, "__props__"):
-            return {prop: getattr(self, prop) for prop in self.__props__}
-        return {}
 
 
 class HasDataType:
