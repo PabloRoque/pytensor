@@ -204,7 +204,7 @@ class Op(MetaObject):
     as nodes with these Ops must be rebuilt even if the input types haven't changed.
     """
 
-    __props__: tuple[str, ...] = None
+    __props__: tuple[str, ...] = ()
     """
     A tuple of attribute names that define the properties of this Op instance.
 
